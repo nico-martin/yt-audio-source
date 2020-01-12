@@ -1,0 +1,22 @@
+{
+    "plugins": [
+        "import",
+        "prettier"
+    ],
+    "parser": "babel-eslint",
+    "extends": [
+        "plugin:prettier/recommended"
+    ],
+    "rules": {
+        "no-console": "warn"
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".js"
+                ]
+            }
+        }
+    }
+}
