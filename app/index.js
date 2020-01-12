@@ -13,11 +13,15 @@ app.get('/:videoID/', (req, res) => {
     .then(info => {
       res.send({
         url: chooseFormat(info.formats, { filter: 'audioonly' }).url,
+        author: info.author.name,
+        title: info.title,
       });
     })
     .catch(err => {
       res.status(400).send({
         url: false,
+        author: false,
+        title: false,
       });
     });
 });
@@ -25,6 +29,8 @@ app.get('/:videoID/', (req, res) => {
 app.all('*', (req, res, next) => {
   res.status(400).send({
     url: false,
+    author: false,
+    title: false,
   });
 });
 
