@@ -8,11 +8,23 @@ let app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  getInfo(req.query.v, (err, info) => {
-    res.send({
-      url: chooseFormat(info.formats, { filter: 'audioonly' }).url,
+app.get('/{videoID}/', (req, res) => {
+  getInfo(req.params.videoID)
+    .then(info => {
+      res.send({
+        url: chooseFormat(info.formats, { filter: 'audioonly' }).url,
+      });
+    })
+    .catch(err => {
+      res.status(400).send({
+        url: false,
+      });
     });
+});
+
+app.all('*', (req, res, next) => {
+  res.status(400).send({
+    url: false,
   });
 });
 
