@@ -8,7 +8,7 @@ let app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/{videoID}/', (req, res) => {
+app.get('/:videoID/', (req, res) => {
   getInfo(req.params.videoID)
     .then(info => {
       res.send({
