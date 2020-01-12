@@ -19,18 +19,18 @@ app.get('/:videoID/', (req, res) => {
     })
     .catch(err => {
       res.status(400).send({
-        url: false,
-        author: false,
-        title: false,
+        url: '',
+        author: '',
+        title: '',
       });
     });
 });
 
 app.all('*', (req, res, next) => {
   res.status(400).send({
-    url: false,
-    author: false,
-    title: false,
+    url: '',
+    author: '',
+    title: '',
   });
 });
 
