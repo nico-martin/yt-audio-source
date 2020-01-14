@@ -1,4 +1,4 @@
-import { getInfo } from 'ytdl-core';
+import { getInfo, chooseFormat } from 'ytdl-core';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -11,10 +11,19 @@ app.use(bodyParser.json());
 app.get('/:videoID/', (req, res) => {
   getInfo(req.params.videoID)
     .then(info => {
+      const formats = {};
+      info.formats
+        .filter(file => file.mimeType.startsWith('audio'))
+        .map(file => {
+          formats[file.mimeType.split(';')[0]] = file.url;
+        });
+
       res.send({
-        url: info.formats.find(f => f.mimeType.startsWith("audio/mp4")).url),
+        url: chooseFormat(info.formats, { filter: 'audioonly' }).url,
+        formats,
         author: info.author.name,
         title: info.title,
+        description: info.description,
       });
     })
     .catch(err => {
