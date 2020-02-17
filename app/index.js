@@ -9,7 +9,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/:videoID/', (req, res) => {
-  getInfo(req.params.videoID)
+  getInfo(req.params.videoID, [{ downloadURL: true }])
     .then(info => {
       const formats = {};
       info.formats
