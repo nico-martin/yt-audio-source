@@ -24,6 +24,7 @@ app.get('/:videoID/', (req, res) => {
         author: info.author.name,
         title: info.title,
         description: info.description,
+        images: info.player_response.videoDetails.thumbnail.thumbnails,
       });
     })
     .catch(err => {
