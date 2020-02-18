@@ -2,6 +2,9 @@ import { getInfo, chooseFormat } from 'ytdl-core';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import https from 'https';
+import request from 'request';
+
 const PORT = process.env.PORT || 2005;
 
 let app = express();
@@ -9,7 +12,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/:videoID/', (req, res) => {
-  getInfo(req.params.videoID, [{ downloadURL: true }])
+  getInfo(req.params.videoID)
     .then(info => {
       const formats = {};
       info.formats
@@ -34,6 +37,10 @@ app.get('/:videoID/', (req, res) => {
         title: '',
       });
     });
+});
+
+app.get('/play/:url', (req, res) => {
+  req.pipe(request.get(req.params.url)).pipe(res);
 });
 
 app.all('*', (req, res, next) => {

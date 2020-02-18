@@ -12,6 +12,7 @@
         "express": "^4.17.1",
         "fs": "^0.0.1-security",
         "path": "^0.12.7",
+        "request": "^2.88.2",
         "ytdl-core": "^1.0.6"
     },
     "devDependencies": {
