@@ -2,7 +2,6 @@ import { getInfo, chooseFormat } from 'ytdl-core';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import https from 'https';
 import request from 'request';
 
 const PORT = process.env.PORT || 2005;
