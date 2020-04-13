@@ -10,6 +10,10 @@ let app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.get('/ping/', (req, res) => {
+  res.send({ ping: 'pong' });
+});
+
 app.get('/:videoID/', (req, res) => {
   getInfo(req.params.videoID)
     .then(info => {
@@ -40,10 +44,6 @@ app.get('/:videoID/', (req, res) => {
 
 app.get('/play/:url', (req, res) => {
   req.pipe(request.get(req.params.url)).pipe(res);
-});
-
-app.get('/ping/', (req, res) => {
-  res.send({ ping: 'pong' });
 });
 
 app.all('*', (req, res, next) => {
