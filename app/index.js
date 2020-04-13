@@ -11,13 +11,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/:videoID/', (req, res) => {
-  if (req.params.videoID === '') {
-    res.send({
-      url: '',
-      author: '',
-      title: '',
-    });
-  }
   getInfo(req.params.videoID)
     .then(info => {
       const formats = {};
@@ -47,6 +40,10 @@ app.get('/:videoID/', (req, res) => {
 
 app.get('/play/:url', (req, res) => {
   req.pipe(request.get(req.params.url)).pipe(res);
+});
+
+app.get('/ping/', (req, res) => {
+  res.send({ ping: 'pong' });
 });
 
 app.all('*', (req, res, next) => {
