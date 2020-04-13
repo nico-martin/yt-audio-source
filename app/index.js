@@ -11,6 +11,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/:videoID/', (req, res) => {
+  if (req.params.videoID === '') {
+    res.send({
+      url: '',
+      author: '',
+      title: '',
+    });
+  }
   getInfo(req.params.videoID)
     .then(info => {
       const formats = {};
