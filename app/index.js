@@ -1,8 +1,9 @@
-import { getInfo, chooseFormat } from 'ytdl-core';
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import request from 'request';
+const ytdl = require('ytdl-core');
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const request = require('request');
 
 const PORT = process.env.PORT || 2005;
 
@@ -15,7 +16,8 @@ app.get('/ping/', (req, res) => {
 });
 
 app.get('/:videoID/', (req, res) => {
-  getInfo(req.params.videoID)
+  ytdl
+    .getInfo(req.params.videoID)
     .then(info => {
       const formats = {};
       info.formats
@@ -25,15 +27,17 @@ app.get('/:videoID/', (req, res) => {
         });
 
       res.send({
-        url: chooseFormat(info.formats, { filter: 'audioonly' }).url,
+        url: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
         formats,
-        author: info.author.name,
-        title: info.title,
-        description: info.description,
+        author: info.videoDetails.author.name,
+        title: info.videoDetails.title,
+        description: info.videoDetails.description,
         images: info.player_response.videoDetails.thumbnail.thumbnails,
       });
     })
     .catch(err => {
+      console.log(err);
+
       res.status(400).send({
         url: '',
         author: '',
