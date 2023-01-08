@@ -4,85 +4,76 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const request = require('request');
-const MatomoTracker = require('matomo-tracker');
-const { log, getFullUrl } = require('./log');
 
-// Initialize with your site ID and Matomo URL
-const matomo = new MatomoTracker(
-  10,
-  'https://analytics.sayhello.agency/matomo.php'
-);
-
-// Optional: Respond to tracking errors
-matomo.on('error', err => log('error tracking request: ', err));
+const Sentry = require('@sentry/node');
+const Tracing = require('@sentry/tracing');
 
 const PORT = process.env.PORT || 2005;
 
 let app = express();
+
+Sentry.init({
+  dsn:
+    'https://ed1a63b5aa00466f9b9123fbbcb9b4ac@o4504470995664896.ingest.sentry.io/4504471001890816',
+  integrations: [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Tracing.Integrations.Express({ app }),
+  ],
+  tracesSampleRate: 1.0,
+});
+
 app.use(cors());
 app.use(bodyParser.json());
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
 
 app.get('/ping/', (req, res) => {
-  matomo.track(getFullUrl(req));
   res.send({ ping: 'pong' });
 });
 
 app.get('/:videoID/', (req, res) => {
-  try {
-    matomo.track(getFullUrl(req));
-    ytdl
-      .getInfo(req.params.videoID)
-      .then(info => {
-        const formats = {};
-        info.formats
-          .filter(file => file.mimeType.startsWith('audio'))
-          .map(file => {
-            formats[file.mimeType.split(';')[0]] = file.url;
-          });
-
-        res.send({
-          url: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
-          formats,
-          author: info.videoDetails.author.name,
-          title: info.videoDetails.title,
-          description: info.videoDetails.description,
-          images: info.player_response.videoDetails.thumbnail.thumbnails,
+  ytdl
+    .getInfo(req.params.videoID)
+    .then(info => {
+      const formats = {};
+      info.formats
+        .filter(file => file.mimeType.startsWith('audio'))
+        .map(file => {
+          formats[file.mimeType.split(';')[0]] = file.url;
         });
-      })
-      .catch(err => {
-        log(err);
 
-        res.status(400).send({
-          url: '',
-          author: '',
-          title: '',
-        });
+      res.send({
+        url: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
+        formats,
+        author: info.videoDetails.author.name,
+        title: info.videoDetails.title,
+        description: info.videoDetails.description,
+        images: info.player_response.videoDetails.thumbnail.thumbnails,
       });
-  } catch (e) {
-    log(e);
-  }
+    })
+    .catch(err => {
+      res.status(400).send({
+        url: '',
+        author: '',
+        title: '',
+      });
+
+      throw err;
+    });
 });
 
 app.get('/play/:url', (req, res) => {
-  try {
-    matomo.track(getFullUrl(req));
-    req.pipe(request.get(req.params.url)).pipe(res);
-  } catch (e) {
-    log(e);
-  }
+  req.pipe(request.get(req.params.url)).pipe(res);
 });
 
 app.all('*', (req, res, next) => {
-  try {
-    matomo.track(getFullUrl(req));
-    res.status(400).send({
-      url: '',
-      author: '',
-      title: '',
-    });
-  } catch (e) {
-    log(e);
-  }
+  res.status(400).send({
+    url: '',
+    author: '',
+    title: '',
+  });
 });
+
+app.use(Sentry.Handlers.errorHandler());
 
 app.listen(PORT, () => console.log(`APP listening to ${PORT}!`));

@@ -6,12 +6,13 @@
     "dev": "nodemon --exec && npm run start"
   },
   "dependencies": {
+    "@sentry/node": "^7.29.0",
+    "@sentry/tracing": "^7.29.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs": "^0.0.1-security",
-    "matomo-tracker": "^2.2.4",
     "path": "^0.12.7",
     "request": "^2.88.2",
     "ytdl-core": "^4.11.2"
