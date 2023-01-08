@@ -4,6 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const request = require('request');
+const favicon = require('serve-favicon');
+const path = require('path');
 
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
@@ -26,6 +28,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
+app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')));
 
 app.get('/ping/', (req, res) => {
   res.send({ ping: 'pong' });
@@ -65,6 +68,8 @@ app.get('/:videoID/', (req, res) => {
 app.get('/play/:url', (req, res) => {
   req.pipe(request.get(req.params.url)).pipe(res);
 });
+
+app.get('/favico.ico', (req, res) => res.sendFile('myfavico.ico'));
 
 app.all('*', (req, res, next) => {
   res.status(400).send({
