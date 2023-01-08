@@ -4,7 +4,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const request = require('request');
-const log = require('./log');
+const MatomoTracker = require('matomo-tracker');
+const { log, getFullUrl } = require('./log');
+
+// Initialize with your site ID and Matomo URL
+const matomo = new MatomoTracker(
+  10,
+  'https://analytics.sayhello.agency/matomo.php'
+);
+
+// Optional: Respond to tracking errors
+matomo.on('error', err => log('error tracking request: ', err));
 
 const PORT = process.env.PORT || 2005;
 
@@ -13,11 +23,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/ping/', (req, res) => {
+  matomo.track(getFullUrl(req));
   res.send({ ping: 'pong' });
 });
 
 app.get('/:videoID/', (req, res) => {
   try {
+    matomo.track(getFullUrl(req));
     ytdl
       .getInfo(req.params.videoID)
       .then(info => {
@@ -53,6 +65,7 @@ app.get('/:videoID/', (req, res) => {
 
 app.get('/play/:url', (req, res) => {
   try {
+    matomo.track(getFullUrl(req));
     req.pipe(request.get(req.params.url)).pipe(res);
   } catch (e) {
     log(e);
@@ -61,6 +74,7 @@ app.get('/play/:url', (req, res) => {
 
 app.all('*', (req, res, next) => {
   try {
+    matomo.track(getFullUrl(req));
     res.status(400).send({
       url: '',
       author: '',

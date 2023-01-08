@@ -9,4 +9,7 @@ const log = d => {
   logStdout.write(util.format(d) + '\n');
 };
 
-module.exports = log;
+const getFullUrl = req =>
+  req.protocol + '://' + req.get('host') + req.originalUrl;
+
+module.exports = { log, getFullUrl };
