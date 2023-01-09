@@ -8,10 +8,10 @@
   "dependencies": {
     "@sentry/node": "^7.29.0",
     "@sentry/tracing": "^7.29.0",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",
     "request": "^2.88.2",
