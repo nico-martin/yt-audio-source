@@ -55,15 +55,13 @@ app.get('/:videoID/', (req, res) => {
         images: info.player_response.videoDetails.thumbnail.thumbnails,
       });
     })
-    .catch(err => {
+    .catch(() =>
       res.status(400).send({
         url: '',
         author: '',
         title: '',
-      });
-
-      throw err;
-    });
+      })
+    );
 });
 
 app.get('/play/:url', (req, res) => {
@@ -72,13 +70,13 @@ app.get('/play/:url', (req, res) => {
 
 app.get('/favico.ico', (req, res) => res.sendFile('myfavico.ico'));
 
-app.all('*', (req, res, next) => {
+app.all('*', (req, res, next) =>
   res.status(400).send({
     url: '',
     author: '',
     title: '',
-  });
-});
+  })
+);
 
 app.use(Sentry.Handlers.errorHandler());
 
