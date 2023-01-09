@@ -35,8 +35,9 @@ app.get('/ping/', (req, res) => {
 });
 
 app.get('/:videoID/', (req, res) => {
+  const id = (req?.params?.videoID || '').replace(/[^A-Za-z0-9_\-]/g, '');
   ytdl
-    .getInfo(req.params.videoID)
+    .getInfo(id)
     .then(info => {
       const formats = {};
       info.formats
