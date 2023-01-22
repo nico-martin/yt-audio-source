@@ -35,33 +35,40 @@ app.get('/ping/', (req, res) => {
 });
 
 app.get('/:videoID/', (req, res) => {
-  const id = (req?.params?.videoID || '').replace(/[^A-Za-z0-9_\-]/g, '');
-  ytdl
-    .getInfo(id)
-    .then(info => {
-      const formats = {};
-      info.formats
-        .filter(file => file.mimeType.startsWith('audio'))
-        .map(file => {
-          formats[file.mimeType.split(';')[0]] = file.url;
-        });
+  try {
+    const id = (req?.params?.videoID || '').replace(/[^A-Za-z0-9_\-]/g, '');
+    ytdl
+      .getInfo(id)
+      .then(info => {
+        const formats = {};
+        info.formats
+          .filter(file => file.mimeType.startsWith('audio'))
+          .map(file => {
+            formats[file.mimeType.split(';')[0]] = file.url;
+          });
 
-      res.send({
-        url: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
-        formats,
-        author: info.videoDetails.author.name,
-        title: info.videoDetails.title,
-        description: info.videoDetails.description,
-        images: info.player_response.videoDetails.thumbnail.thumbnails,
-      });
-    })
-    .catch(() =>
-      res.status(400).send({
-        url: '',
-        author: '',
-        title: '',
+        res.send({
+          url: ytdl.chooseFormat(info.formats, { filter: 'audioonly' }).url,
+          formats,
+          author: info.videoDetails.author.name,
+          title: info.videoDetails.title,
+          description: info.videoDetails.description,
+          images: info.player_response.videoDetails.thumbnail.thumbnails,
+        });
       })
-    );
+      .catch(() =>
+        res.status(400).send({
+          url: '',
+          author: '',
+          title: '',
+        })
+      );
+  } catch (e) {
+    res.status(500).send({
+      error: 'unexpected server error',
+      reason: '',
+    });
+  }
 });
 
 app.get('/play/:url', (req, res) => {
