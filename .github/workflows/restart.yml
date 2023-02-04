@@ -3,7 +3,7 @@ name: Restart Server
 'on':
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
