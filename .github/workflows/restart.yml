@@ -1,0 +1,26 @@
+name: Restart Server
+
+'on':
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Restart
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - name: update docker-compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.TESTS_SERVER_HOST }}
+          username: ${{ secrets.TESTS_SERVER_USERNAME }}
+          key: ${{ secrets.TESTS_SERVER_KEY }}
+          port: ${{ secrets.TESTS_SERVER_PORT }}
+          script: |
+            cd ~/var/docker/
+            docker-compose restart
