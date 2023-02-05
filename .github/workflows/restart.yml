@@ -1,9 +1,8 @@
 name: Restart Server
 
 'on':
-  workflow_dispatch:
-    types:
-      - restart
+  repository_dispatch:
+    types: [restart]
 
 jobs:
   build:
