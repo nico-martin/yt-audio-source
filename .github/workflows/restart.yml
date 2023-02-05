@@ -15,7 +15,7 @@ jobs:
         with:
           host: ${{ vars.SERVER_HOST }}
           username: ${{ vars.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_KEY }}
+          password: ${{ secrets.SERVER_KEY }}
           port: ${{ vars.SERVER_PORT }}
           script: |
             cd ~/var/docker/
