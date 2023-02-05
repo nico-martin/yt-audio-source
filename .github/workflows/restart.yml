@@ -1,9 +1,9 @@
 name: Restart Server
 
 'on':
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    types:
+      - restart
 
 jobs:
   build:
