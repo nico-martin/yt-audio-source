@@ -56,13 +56,14 @@ app.get('/:videoID/', (req, res) => {
           images: info.player_response.videoDetails.thumbnail.thumbnails,
         });
       })
-      .catch(() =>
-        res.status(400).send({
+      .catch(e => {
+        console.log(e);
+        return res.status(400).send({
           url: '',
           author: '',
           title: '',
-        })
-      );
+        });
+      });
   } catch (e) {
     res.status(500).send({
       error: 'unexpected server error',
