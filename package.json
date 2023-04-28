@@ -16,7 +16,7 @@
     "path": "^0.12.7",
     "request": "^2.88.2",
     "serve-favicon": "^2.5.0",
-    "ytdl-core": "^4.11.4"
+    "ytdl-core": "https://github.com/khlevon/node-ytdl-core.git#v4.11.4-patch.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.1",
