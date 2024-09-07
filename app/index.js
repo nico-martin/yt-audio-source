@@ -7,27 +7,27 @@ const request = require('request');
 const favicon = require('serve-favicon');
 const path = require('path');
 
-const Sentry = require('@sentry/node');
+const Sentry = process.env.SENTRY_URL ? require('@sentry/node') : null;
 const Tracing = require('@sentry/tracing');
 
 const PORT = process.env.PORT || 2005;
 
 let app = express();
 
-Sentry.init({
-  dsn:
-    'https://ed1a63b5aa00466f9b9123fbbcb9b4ac@o4504470995664896.ingest.sentry.io/4504471001890816',
-  integrations: [
-    new Sentry.Integrations.Http({ tracing: true }),
-    new Tracing.Integrations.Express({ app }),
-  ],
-  tracesSampleRate: 1.0,
-});
+Sentry &&
+  Sentry.init({
+    dsn: process.env.SENTRY_URL,
+    integrations: [
+      new Sentry.Integrations.Http({ tracing: true }),
+      new Tracing.Integrations.Express({ app }),
+    ],
+    tracesSampleRate: 1.0,
+  });
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
+Sentry && app.use(Sentry.Handlers.requestHandler());
+Sentry && app.use(Sentry.Handlers.tracingHandler());
 app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')));
 
 app.get('/ping/', (req, res) => {
@@ -86,6 +86,6 @@ app.all('*', (req, res, next) =>
   })
 );
 
-app.use(Sentry.Handlers.errorHandler());
+Sentry && app.use(Sentry.Handlers.errorHandler());
 
 app.listen(PORT, () => console.log(`APP listening to ${PORT}!`));
